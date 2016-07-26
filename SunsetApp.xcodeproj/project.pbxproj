@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A827A9AC1D455E0D00CF818F /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A827A9AB1D455E0D00CF818F /* CoreLocation.framework */; };
 		A854166C1D3AE79200C91C27 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A854166B1D3AE79200C91C27 /* AppDelegate.swift */; };
 		A854166E1D3AE79200C91C27 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A854166D1D3AE79200C91C27 /* ViewController.swift */; };
 		A85416711D3AE79200C91C27 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A854166F1D3AE79200C91C27 /* Main.storyboard */; };
@@ -16,6 +17,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		A827A9AB1D455E0D00CF818F /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		A85416681D3AE79200C91C27 /* SunsetApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SunsetApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A854166B1D3AE79200C91C27 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A854166D1D3AE79200C91C27 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -31,6 +33,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A827A9AC1D455E0D00CF818F /* CoreLocation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -40,6 +43,7 @@
 		A854165F1D3AE79200C91C27 = {
 			isa = PBXGroup;
 			children = (
+				A827A9AB1D455E0D00CF818F /* CoreLocation.framework */,
 				A854166A1D3AE79200C91C27 /* SunsetApp */,
 				A85416691D3AE79200C91C27 /* Products */,
 			);
@@ -290,6 +294,7 @@
 				A854167F1D3AE79200C91C27 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 
