@@ -14,15 +14,16 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     
     @IBOutlet var outputLabel: UILabel!
     var locationManager = CLLocationManager()
-    var requestURL = String()
+    //var requestURL = String()
+    var currentLocation: CLLocation?
     
     // Array<Dictionary<String,AnyObject>>
     // Dictionary<String,AnyObject>()
-
+    
     //   var myResult = response.first <<array
     //   var sunsetTimes:Dictionary<String, AnyObject>? // sunsetTimes *can be nil* ?<==
     var sunsetTimes :Dictionary<String, AnyObject>?// = Dictionary<String, AnyObject>() // sunsetTimes is *not nil*, never be nil, type is inferred (whatever we set it equal to), cannot reset to some other type
-
+    
     //    can be nil -- can not be nil --- never be nil (better) than if it *can* be nil
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -30,49 +31,33 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         locationManager.requestWhenInUseAuthorization()
         locationManager.delegate = self
         
+        //  Dropdown of selection of cities
+        //  Type in the city name
+        //  Choose it on a map (mapkit)
+        //  CLLocation (geolocation) -- immediate location - scale
         
-        //        Dropdown of selection of cities
-        //        Type in the city name
-        //        Choose it on a map (mapkit)
-        //        CLLocation (geolocation) -- immediate location - scale
+        //  Error handling - tell the user they entered URL info that was not correct.
         
-        //        Error handling - tell the user they entered URL info that was not correct.
+       
+        locationManager.startUpdatingLocation()
+//        findSunsetTime()
         
-        let url = NSURL(string:requestURL)
-        let session = NSURLSession.sharedSession()
-        let task = session.dataTaskWithURL(url!) { (dataThatComesBackFromTheInternet, httpResponse, error) -> Void in
-            
-            dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                
-                if let unwrappedDataThatComesBackFromTheInternet = dataThatComesBackFromTheInternet {
-                    do {
-                        if let correctlyTypedSunsetResults = try NSJSONSerialization.JSONObjectWithData(unwrappedDataThatComesBackFromTheInternet, options: .AllowFragments)  as? [String:AnyObject] {
-                            self.sunsetTimes = correctlyTypedSunsetResults // Dictionary<String,AnyObject>
-                            
-                            if (correctlyTypedSunsetResults["results"] as? [String: AnyObject]) != nil {
-                                let item = correctlyTypedSunsetResults["results"] as? [String: AnyObject]
-                                self.outputLabel.text = item?["sunset"] as? String
-                            }
-                        } else {
-                            print("There is a problem")
-                        }
-                    }  catch let error as NSError {
-                        print("JSONError: \(error.localizedDescription)")
-                    }
-                } else {
-                    print("data is nil")
-                }
-            })
-        }
-        task.resume()
     }
     
     
+    func locationManager(manager: CLLocationManager, didFailWithError error: NSError) {
+        print(error)
+    }
+    
+
+    
     func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        self.currentLocation = locations.first
         let location = locations.first //returns an array of CLLocations
         if location?.horizontalAccuracy < 1000 && location?.verticalAccuracy < 1000 {
             reverseGeocode(location!)
             locationManager.stopUpdatingLocation()
+            self.findSunsetTime()
         }
         
     }
@@ -106,9 +91,12 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         if (CLLocationManager.authorizationStatus() == CLAuthorizationStatus.AuthorizedWhenInUse ||
             CLLocationManager.authorizationStatus() == CLAuthorizationStatus.AuthorizedAlways){
             
-            currentLocation = locationManager.location!
+            
+            if let unwrappedLocation = self.currentLocation {
+                currentLocation = unwrappedLocation
+            }
+
         }
-        
         
         let date = NSDate() // - find the local/current date and time
         //    http://api.sunrise-sunset.org/json?lat=36.7201600&lng=-4.4203400
@@ -119,6 +107,33 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         //        var myToday: String =
         let requestURL =  (baseURL) + ("lat="+latitude) + ("&lng="+longitude) //+ (myToday)
         
+        let url = NSURL(string:requestURL)
+        let session = NSURLSession.sharedSession()
+        let task = session.dataTaskWithURL(url!) { (dataThatComesBackFromTheInternet, httpResponse, error) -> Void in
+            
+            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                
+                if let unwrappedDataThatComesBackFromTheInternet = dataThatComesBackFromTheInternet {
+                    do {
+                        if let correctlyTypedSunsetResults = try NSJSONSerialization.JSONObjectWithData(unwrappedDataThatComesBackFromTheInternet, options: .AllowFragments)  as? [String:AnyObject] {
+                            self.sunsetTimes = correctlyTypedSunsetResults // Dictionary<String,AnyObject>
+                            
+                            if (correctlyTypedSunsetResults["results"] as? [String: AnyObject]) != nil {
+                                let item = correctlyTypedSunsetResults["results"] as? [String: AnyObject]
+                                self.outputLabel.text = item?["sunset"] as? String
+                            }
+                        } else {
+                            print("There is a problem")
+                        }
+                    }  catch let error as NSError {
+                        print("JSONError: \(error.localizedDescription)")
+                    }
+                } else {
+                    print("data is nil")
+                }
+            })
+        }
+        task.resume()
         
         
     }
